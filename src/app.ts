@@ -15,14 +15,34 @@ export class Lazy {
         return this;      
     }
     
-    /* evaluate(...args: number[]): number[] {
-    // Should return result of calculating args received by add()
-    console.log(this.add(1, 2, 3));
-    //console.log(this.intermediate[0][1]);
-    return [0]; // dummy data
-  } */
+    evaluate(v: number[]): number[] {
+        let runTotal: number[] = [];
+        let evaluation: number[] = [];
+        v.forEach(val => {
+            this.lazyStore.forEach((outerArr) => {
+                // Execute lazy with evaluate's arg as its parameter
+                let lExprRes = outerArr[0](val);
+                // Sum additional add function parameters
+                let lArgsSum = outerArr[1].reduce((partialSum, a) => partialSum + a, 0);
+                // If lazy expression produced a result, add that to args sum and store
+                // Otherwise just store args sum
+                runTotal.push(lExprRes ? lExprRes + lArgsSum : lArgsSum);
+            })
+            evaluation.push(runTotal.reduce((partialSum, a) => partialSum + a, 0))
+            runTotal = [];
+        })
+        return evaluation;
+    }
 }
 
-// Just testing things out
-const computation = new Lazy();
-computation.add((a: number) => a * 2, 1, 2).add(() => 4 + 8, 2);
+let computation = new Lazy();
+let result = computation
+    // simple function
+    .add(function timesTwo(a: number): number { return a * 2; }) // simple function
+    // a plus function that will be given 1 as its first argument
+    .add(function plus(a: number, b: number): number { return a + b; }, 1) 
+    // compute the final result
+    .evaluate([1, 2, 3]);
+
+console.log(result);
+// [3, 5, 7]
