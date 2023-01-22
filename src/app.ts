@@ -14,4 +14,15 @@ export class Lazy {
         lazy ? this.lazyStore.push([lazy, args]) : this.lazyStore.push([() => {}, args]);
         return this;      
     }
+    
+    /* evaluate(...args: number[]): number[] {
+    // Should return result of calculating args received by add()
+    console.log(this.add(1, 2, 3));
+    //console.log(this.intermediate[0][1]);
+    return [0]; // dummy data
+  } */
 }
+
+// Just testing things out
+const computation = new Lazy();
+computation.add((a: number) => a * 2, 1, 2).add(() => 4 + 8, 2);
